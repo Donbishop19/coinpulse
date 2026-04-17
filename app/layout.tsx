@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className="dark"
+      className={`${geistSans.variable} ${geistMono.variable} dark`}
     >
       <body className="min-h-full flex flex-col">
         <Header />

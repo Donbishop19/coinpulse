@@ -9,10 +9,10 @@ import React from 'react'
 const Header = () => {
   const pathname = usePathname();
   return (
-    <header>
+    <header className="site-header">
       <div className="main-container inner">
         <Link href="/">
-          <Image src="logo.svg" alt='CoinPulse logo' width={132} height={40} />
+          <Image src="/logo.svg" alt='CoinPulse logo' width={132} height={40} />
         </Link>
 
         <nav>
@@ -24,7 +24,7 @@ const Header = () => {
           <p>Search Modal</p>
 
           <Link href="/coins" className={cn('nav-link', {
-            "is-active": pathname === 'coins',
+            "is-active": pathname === '/coins',
           })}>All Coins</Link>
         </nav>
       </div>
