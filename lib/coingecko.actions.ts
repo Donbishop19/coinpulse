@@ -1,5 +1,4 @@
-'use server';
-
+import  'server-only';
 import qs from 'query-string';
 
 const BASE_URL = process.env.COINGECKO_BASE_URL;
