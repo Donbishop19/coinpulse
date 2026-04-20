@@ -6,7 +6,7 @@ import {
 } from '@/components/home/Fallback';
 import React, { Suspense } from 'react';
 
-const page = async () => {
+const Page = async () => {
   return (
     <main className="main-container">
       <section className="home-grid">
@@ -24,4 +24,4 @@ const page = async () => {
     </main>
   );
 };
-export default page;
+export default Page;
