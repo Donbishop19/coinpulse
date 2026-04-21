@@ -3,7 +3,6 @@
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -16,7 +15,19 @@ const CoinsPagination = ({ currentPage, totalPages, hasMorePages }: Pagination) 
   const router = useRouter();
 
   const handlePageChange = (page: number) => {
+    if (page < 1) return;
     router.push(`/coins?page=${page}`);
+  };
+
+  const handlePrevious = () => {
+    if (currentPage <= 1) return;
+    handlePageChange(currentPage - 1);
+  };
+
+  const handleNext = () => {
+    const isLastPage = !hasMorePages || currentPage === totalPages;
+    if (isLastPage) return;
+    handlePageChange(currentPage + 1);
   };
 
   const pageNumbers = buildPageNumbers(currentPage, totalPages);
@@ -27,8 +38,10 @@ const CoinsPagination = ({ currentPage, totalPages, hasMorePages }: Pagination) 
       <PaginationContent className="pagination-content">
         <PaginationItem className="pagination-control prev">
           <PaginationPrevious
-            onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+            onClick={handlePrevious}
             className={currentPage === 1 ? 'control-disabled' : 'control-button'}
+            aria-disabled={currentPage === 1}
+            tabIndex={currentPage === 1 ? -1 : 0}
           />
         </PaginationItem>
 
@@ -43,6 +56,8 @@ const CoinsPagination = ({ currentPage, totalPages, hasMorePages }: Pagination) 
                   className={cn('page-link', {
                     'page-link-active': currentPage === page,
                   })}
+                  aria-disabled={currentPage === page}
+                  tabIndex={currentPage === page ? -1 : 0}
                 >
                   {page}
                 </PaginationLink>
@@ -53,8 +68,10 @@ const CoinsPagination = ({ currentPage, totalPages, hasMorePages }: Pagination) 
 
         <PaginationItem className="pagination-control next">
           <PaginationNext
-            onClick={() => !isLastPage && handlePageChange(currentPage + 1)}
+            onClick={handleNext}
             className={isLastPage ? 'control-disabled' : 'control-button'}
+            aria-disabled={isLastPage}
+            tabIndex={isLastPage ? -1 : 0}
           />
         </PaginationItem>
       </PaginationContent>

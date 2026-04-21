@@ -9,17 +9,24 @@ import CoinsPagination from '@/components/CoinsPagination';
 const Coins = async ({ searchParams }: NextPageProps) => {
   const { page } = await searchParams;
 
-  const currentPage = Number(page) || 1;
+  const parsed = Number(page);
+  const currentPage = Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 1;
   const perPage = 10;
 
-  const coinsData = await fetcher<CoinMarketData[]>('/coins/markets', {
-    vs_currency: 'usd',
-    order: 'market_cap_desc',
-    per_page: perPage,
-    page: currentPage,
-    sparkline: 'false',
-    price_change_percentage: '24h',
-  });
+   let coinsData: CoinMarketData[] = [];
+  try {
+    coinsData = await fetcher<CoinMarketData[]>('/coins/markets', {
+      vs_currency: 'usd',
+      order: 'market_cap_desc',
+      per_page: perPage,
+      page: currentPage,
+      sparkline: 'false',
+      price_change_percentage: '24h',
+    });
+  } catch (error) {
+    console.error('[Coins] Failed to fetch markets:', error);
+    // render fallback UI below
+  }
 
   const columns: DataTableColumn<CoinMarketData>[] = [
     {
