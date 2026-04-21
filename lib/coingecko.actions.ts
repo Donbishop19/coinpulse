@@ -1,4 +1,4 @@
-import  'server-only';
+'use server';
 import qs from 'query-string';
 
 const BASE_URL = process.env.COINGECKO_BASE_URL;
@@ -10,19 +10,19 @@ if (!API_KEY) throw new Error('could not get api key');
 export async function fetcher<T>(
   endpoint: string,
   params?: QueryParams,
-  revalidate = 60
+  revalidate = 60,
 ): Promise<T> {
   const url = qs.stringifyUrl(
     {
       url: `${BASE_URL}/${endpoint}`,
       query: params,
     },
-    { skipEmptyString: true, skipNull: true }
+    { skipEmptyString: true, skipNull: true },
   );
 
   const response = await fetch(url, {
     headers: {
-      'x-cg-pro-api-key': API_KEY,
+      'x-cg-demo-api-key': API_KEY,
       'Content-Type': 'application/json',
     } as Record<string, string>,
     next: { revalidate },
@@ -31,7 +31,7 @@ export async function fetcher<T>(
   if (!response.ok) {
     const errorBody: CoinGeckoErrorBody = await response.json().catch(() => ({}));
 
-    throw new Error(`API Error: ${response.status}: ${errorBody.error || response.statusText}`);
+   throw new Error(`API Error: ${response.status}: ${errorBody.error || response.statusText}`);
   }
 
   return response.json();
