@@ -2,8 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-const WS_BASE = `${process.env.NEXT_PUBLIC_COINGECKO_WEBSOCKET_URL}?x_cg_pro_api_key=${process.env.NEXT_PUBLIC_COINGECKO_API_KEY}`;
-
 export const useCoinGeckoWebSocket = ({
   coinId,
   poolId,
@@ -19,7 +17,16 @@ export const useCoinGeckoWebSocket = ({
   const [isWsReady, setIsWsReady] = useState(false);
 
   useEffect(() => {
-    const ws = new WebSocket(WS_BASE);
+    const wsUrl = `${process.env.NEXT_PUBLIC_COINGECKO_WEBSOCKET_URL}?x_cg_pro_api_key=${process.env.NEXT_PUBLIC_COINGECKO_API_KEY}`;
+
+    // Validate environment variables
+    if (!process.env.NEXT_PUBLIC_COINGECKO_WEBSOCKET_URL || !process.env.NEXT_PUBLIC_COINGECKO_API_KEY) {
+      console.error('Missing required environment variables for WebSocket connection');
+      setIsWsReady(false);
+      return;
+    }
+
+    const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
     const send = (payload: Record<string, unknown>) => ws.send(JSON.stringify(payload));
@@ -118,17 +125,17 @@ export const useCoinGeckoWebSocket = ({
       }
     };
 
-    queueMicrotask(() => {
-      setPrice(null);
-      setTrades([]);
-      setOhlcv(null);
+    // Reset state and clear old subscriptions first
+    setPrice(null);
+    setTrades([]);
+    setOhlcv(null);
 
-      unsubscribeAll();
+    unsubscribeAll();
 
-      subscribe('CGSimplePrice', { coin_id: [coinId], action: 'set_tokens' });
-    });
+    // Add new subscriptions
+    subscribe('CGSimplePrice', { coin_id: [coinId], action: 'set_tokens' });
 
-    const poolAddress = poolId.replace('_', ':') ?? '';
+    const poolAddress = poolId ? poolId.replace('_', ':') : '';
 
     if (poolAddress) {
       subscribe('OnchainTrade', {

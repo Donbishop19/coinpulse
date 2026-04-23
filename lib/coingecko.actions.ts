@@ -53,7 +53,7 @@ export async function getPools(
   if (network && contractAddress) {
     try {
       const poolData = await fetcher<{ data: PoolData[] }>(
-        `/onchain/networks/${network}/tokens/${contractAddress}/pools`,
+        `onchain/networks/${network}/tokens/${contractAddress}/pools`,
       );
 
       return poolData.data?.[0] ?? fallback;
